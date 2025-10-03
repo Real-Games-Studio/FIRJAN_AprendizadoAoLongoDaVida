@@ -1,0 +1,194 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "nextId": 2,
+      "pergunta": "In the current context, traditional models of professional training and work are:",
+      "respostas": [
+        { "id": "A", "texto": "Considered completely obsolete and worthless." },
+        { "id": "B", "texto": "Under pressure from new demands and rapid transformations." }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "id": 2,
+      "nextId": 3,
+      "pergunta": "21st-century skills include, beyond technical tools:",
+      "respostas": [
+        { "id": "A", "texto": "Only the memorization of procedures." },
+        { "id": "B", "texto": "Listening, collaboration, critical thinking, and creativity." }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "id": 3,
+      "nextId": 4,
+      "pergunta": "Approximately what percentage of companies worldwide struggle to find qualified professionals?",
+      "respostas": [
+        { "id": "A", "texto": "More than 80%." },
+        { "id": "B", "texto": "About 50%." }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "id": 4,
+      "nextId": 5,
+      "pergunta": "For the future of work, which factor is considered most important?",
+      "respostas": [
+        { "id": "A", "texto": "A constant willingness to learn, adapt, and reinvent." },
+        { "id": "B", "texto": "Relying solely on the skills already acquired to date for an entire career." }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "id": 5,
+      "nextId": 6,
+      "pergunta": "The contemporary scenario is characterized by:",
+      "respostas": [
+        { "id": "A", "texto": "Stability and few uncertainties in global and economic spheres." },
+        { "id": "B", "texto": "Uncertainty, information overload, and constant tension." }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "id": 6,
+      "nextId": 7,
+      "pergunta": "How was the term \"skills\" used in the context of the exhibition?",
+      "respostas": [
+        { "id": "A", "texto": "Referring only to technical abilities and formal certifications." },
+        { "id": "B", "texto": "An inclusive concept integrating attitudes, knowledge, competencies, and behaviors." }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "id": 7,
+      "nextId": 8,
+      "pergunta": "Approximately what percentage of workers will need to reskill according to the World Economic Forum?",
+      "respostas": [
+        { "id": "A", "texto": "Nearly 60%." },
+        { "id": "B", "texto": "Only 30% of the youngest workers." }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "id": 8,
+      "nextId": 9,
+      "pergunta": "What characterizes \"Technology Literacy\"?",
+      "respostas": [
+        { "id": "A", "texto": "Using digital technologies critically and consciously, understanding their social impact." },
+        { "id": "B", "texto": "The ability to operate software and devices." }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "id": 9,
+      "nextId": 10,
+      "pergunta": "What is one of the main challenges for companies in a future being redrawn in real time?",
+      "respostas": [
+        { "id": "A", "texto": "Finding people with the right skills amid an accelerated market transformation." },
+        { "id": "B", "texto": "Organizing corporate events such as year-end parties or quarterly meetings." }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "id": 10,
+      "nextId": 11,
+      "pergunta": "Within a skills-first approach, what is most valued in professionals?",
+      "respostas": [
+        { "id": "A", "texto": "What each person is capable of delivering and truly knows how to do, democratizing access to opportunities." },
+        { "id": "B", "texto": "Exclusively previous job titles and formal course certificates, without considering effectively applicable skills." }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "id": 11,
+      "nextId": 12,
+      "pergunta": "Which skill relates to recovering from challenges, adapting, and responding quickly with strategy in uncertain scenarios?",
+      "respostas": [
+        { "id": "A", "texto": "Resilience, flexibility, and agility." },
+        { "id": "B", "texto": "Analytical thinking." }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "id": 12,
+      "nextId": 13,
+      "pergunta": "How is the skill of Creative Thinking defined?",
+      "respostas": [
+        { "id": "A", "texto": "Following established protocols strictly to guarantee consistent results." },
+        { "id": "B", "texto": "Seeking solutions beyond the obvious, making unexpected connections, spotting opportunities, and being willing to experiment and adjust." }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "id": 13,
+      "nextId": 14,
+      "pergunta": "Which option best describes \"Programming\" as a skill?",
+      "respostas": [
+        { "id": "A", "texto": "Designing, testing, and maintaining code so computers execute tasks, requiring logical thinking and creativity." },
+        { "id": "B", "texto": "Entering data into a spreadsheet and creating basic charts without needing system or logic understanding." }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "id": 14,
+      "nextId": 15,
+      "pergunta": "Regarding learning agents in the contemporary world, what is a defining characteristic?",
+      "respostas": [
+        { "id": "A", "texto": "Teaching remains centralized in formal institutions such as schools and universities." },
+        { "id": "B", "texto": "Multiple agents act in synergy, including companies, museums, social organizations, social networks, and artificial intelligences." }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "id": 15,
+      "nextId": 16,
+      "pergunta": "Besides schools and universities, which agents operate in synergy within the contemporary learning ecosystem?",
+      "respostas": [
+        { "id": "A", "texto": "Companies, museums, social organizations, social networks, artificial intelligence, and even family circles." },
+        { "id": "B", "texto": "Public squares and recreation clubs." }
+      ],
+      "correctAnswer": "A"
+    },
+    {
+      "id": 16,
+      "nextId": 17,
+      "pergunta": "What are the three movements considered fundamental for growth in a constantly changing world?",
+      "respostas": [
+        { "id": "A", "texto": "Memorizing, reproducing, and accumulating data." },
+        { "id": "B", "texto": "Learning, unlearning, and relearning." }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "id": 17,
+      "nextId": 18,
+      "pergunta": "What characterizes the stance of \"lifelong learning\"?",
+      "respostas": [
+        { "id": "A", "texto": "Maintaining a static view of one's potential, believing knowledge is limited to what was learned in formal education." },
+        { "id": "B", "texto": "Cultivating an active, curious, and flexible attitude toward a changing world." }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "id": 18,
+      "nextId": 19,
+      "pergunta": "Within the cycle of continuous learning, what does \"unlearning\" mean?",
+      "respostas": [
+        { "id": "A", "texto": "Completely forgetting what was learned in the past." },
+        { "id": "B", "texto": "Questioning habits, letting go of biases, and abandoning outdated methods that no longer work." }
+      ],
+      "correctAnswer": "B"
+    },
+    {
+      "id": 19,
+      "nextId": -1,
+      "pergunta": "What does \"Learner Agency\" represent in the learning process?",
+      "respostas": [
+        { "id": "A", "texto": "The learner's ability to have voice, choice, and active responsibility over their learning journey, embracing autonomy." },
+        { "id": "B", "texto": "A method where teachers fully control the educational path with no room for individual input." }
+      ],
+      "correctAnswer": "A"
+    }
+  ]
+}

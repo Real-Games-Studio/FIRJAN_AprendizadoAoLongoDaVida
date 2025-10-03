@@ -1,0 +1,5 @@
+D:/GitHub/FIRJAN_AprendizadoAoLongoDaVida/FIRJAN_AprendizadoAoLongoDaVida/.utmp/RelWithDebInfo/591y2r6w/arm64-v8a/CMakeFiles/edit_cache.dir
+D:/GitHub/FIRJAN_AprendizadoAoLongoDaVida/FIRJAN_AprendizadoAoLongoDaVida/.utmp/RelWithDebInfo/591y2r6w/arm64-v8a/CMakeFiles/rebuild_cache.dir
+D:/GitHub/FIRJAN_AprendizadoAoLongoDaVida/FIRJAN_AprendizadoAoLongoDaVida/.utmp/RelWithDebInfo/591y2r6w/arm64-v8a/GameActivity/CMakeFiles/game.dir
+D:/GitHub/FIRJAN_AprendizadoAoLongoDaVida/FIRJAN_AprendizadoAoLongoDaVida/.utmp/RelWithDebInfo/591y2r6w/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+D:/GitHub/FIRJAN_AprendizadoAoLongoDaVida/FIRJAN_AprendizadoAoLongoDaVida/.utmp/RelWithDebInfo/591y2r6w/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir

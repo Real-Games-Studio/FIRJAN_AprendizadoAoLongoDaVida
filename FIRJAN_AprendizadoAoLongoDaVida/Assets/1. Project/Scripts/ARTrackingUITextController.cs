@@ -47,9 +47,15 @@ public class ARTrackingUITextController : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        ShowStartMessage();
+        Subscribe();
+        ApplyCurrentStateMessage();
+    }
+
+    private void OnDisable()
+    {
+        Unsubscribe();
     }
 
     /// <summary>
@@ -112,5 +118,45 @@ public class ARTrackingUITextController : MonoBehaviour
         }
 
         messageText.text = startMessage;
+    }
+
+    private void ApplyCurrentStateMessage()
+    {
+        if (messageText == null)
+        {
+            return;
+        }
+
+        if (trackingController == null || !trackingController.GameStarted)
+        {
+            ShowStartMessage();
+            return;
+        }
+
+        HandleImageDetected(trackingController.currentID);
+    }
+
+    private void Subscribe()
+    {
+        if (trackingController == null)
+        {
+            return;
+        }
+
+        trackingController.ImageDetected += HandleImageDetected;
+        trackingController.UnexpectedImageDetected += HandleUnexpectedImage;
+        trackingController.SequenceReset += HandleSequenceReset;
+    }
+
+    private void Unsubscribe()
+    {
+        if (trackingController == null)
+        {
+            return;
+        }
+
+        trackingController.ImageDetected -= HandleImageDetected;
+        trackingController.UnexpectedImageDetected -= HandleUnexpectedImage;
+        trackingController.SequenceReset -= HandleSequenceReset;
     }
 }

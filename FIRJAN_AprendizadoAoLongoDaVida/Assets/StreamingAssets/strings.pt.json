@@ -1,0 +1,27 @@
+{
+  "items": [
+    { "key": "cta.title", "value": "Qual o Caminho?" },
+    { "key": "cta.description", "value": "Toque para começar" },
+    { "key": "cta.button", "value": "Começar" },
+	
+    { "key": "narrativa.title", "value": "Qual o Caminho?" },
+    { "key": "narrativa.description", "value": "Narrativa..." },
+    { "key": "narrativa.button", "value": "Vamos Lá!" },
+	
+	
+    { "key": "gameover.title", "value": "FIM" },
+    { "key": "gameover.lastMessage", "value": "Suas decisões impactaram de maneira positiva nosso crescimento. Habilidades de Pensamento crítico, tomada de decisão e solução de problemas foram adicionados ao seu cartão de progresso" },
+    { "key": "gameover.p1", "value": "Tomada de Decisão" },
+    { "key": "gameover.p2", "value": "Pensamento Crítico" },
+    { "key": "gameover.p3", "value": "Solução de Problemas" },
+
+    { "key": "end.message", "value": "Obrigado! Seus dados foram gravados no seu perfil!" },
+	
+	
+    { "key": "ui.timeout", "value": "Tempo esgotado" },
+    { "key": "ui.confirm", "value": "Confirmar" },
+    { "key": "ui.cancel", "value": "Cancelar" },
+    { "key": "lang.pt", "value": "Português" },
+    { "key": "lang.en", "value": "English" }
+  ]
+}

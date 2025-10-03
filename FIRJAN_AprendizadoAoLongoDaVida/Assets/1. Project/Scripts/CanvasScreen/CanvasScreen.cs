@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -9,6 +10,13 @@ using UnityEngine;
 [RequireComponent(typeof(CanvasGroup))]
 public class CanvasScreen: MonoBehaviour
 {
+    [System.Serializable]
+    public class LocalizationText
+    {
+        public string key;
+        public TMP_Text textField;
+    }
+
     [System.Serializable]
     public class ScreenData
     {
@@ -23,7 +31,7 @@ public class CanvasScreen: MonoBehaviour
     [Tooltip("Toda tela deve ter uma base de canvas group")]
     public CanvasGroup canvasgroup;
     [SerializeField] protected ScreenData data;
-    public ScreenData screenData;
+    public List<LocalizationText> localizationTexts = new List<LocalizationText>();
     public virtual void OnValidate()
     {
         if (canvasgroup == null)
@@ -49,7 +57,7 @@ public class CanvasScreen: MonoBehaviour
         {
             data.editor_turnOn = false;
 
-            foreach (var screen in FindObjectsOfType<CanvasScreen>())
+            foreach (var screen in FindObjectsByType<CanvasScreen>(FindObjectsSortMode.None))
             {
                 if (screen != this && screen.canvasgroup != null)
                 {
@@ -76,11 +84,50 @@ public class CanvasScreen: MonoBehaviour
         }
         // Registra o m騁odo CallScreenListner como ouvinte do evento CallScreen
         ScreenManager.CallScreen += CallScreenListner;
+        // Subscribe to localization changes (wait for manager if necessary)
+        StartCoroutine(WaitForLocalizationAndApply());
     }
     public virtual void OnDisable()
     {
         // Remove o m騁odo CallScreenListner como ouvinte do evento CallScreen
         ScreenManager.CallScreen -= CallScreenListner;
+        if (LocalizationManager.instance != null)
+        {
+            LocalizationManager.instance.OnLanguageChanged -= ApplyLocalization;
+        }
+    }
+
+    private System.Collections.IEnumerator WaitForLocalizationAndApply()
+    {
+        while (LocalizationManager.instance == null)
+        {
+            yield return null;
+        }
+        // Apply now and subscribe
+        ApplyLocalization();
+        LocalizationManager.instance.OnLanguageChanged += ApplyLocalization;
+    }
+
+    private void ApplyLocalization()
+    {
+        if (localizationTexts == null) return;
+        if (LocalizationManager.instance == null) return;
+
+        foreach (var lt in localizationTexts)
+        {
+            if (lt == null) continue;
+            if (lt.textField == null) continue;
+            if (string.IsNullOrEmpty(lt.key)) continue;
+
+            try
+            {
+                lt.textField.text = LocalizationManager.instance.Get(lt.key);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Failed to apply localization for key: " + lt.key + " - " + ex.Message, this);
+            }
+        }
     }
 
     public virtual void CallScreenListner(string screenName)

@@ -1,0 +1,194 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "nextId": 2,
+      "pergunta": "No contexto atual, os modelos tradicionais de formação profissional e trabalho são:",
+      "respostas": [
+        { "id": "A", "texto": "Considerados completamente obsoletos e sem valor." },
+        { "id": "B", "texto": "Tensionados por novas exigências e transformações rápidas." }
+      ],
+      "respostaCorreta": "B"
+    },
+    {
+      "id": 2,
+      "nextId": 3,
+      "pergunta": "As habilidades do século XXI incluem, além das ferramentas técnicas:",
+      "respostas": [
+        { "id": "A", "texto": "Apenas a memorização de procedimentos." },
+        { "id": "B", "texto": "Escuta, colaboração, pensamento crítico e criatividade." }
+      ],
+      "respostaCorreta": "B"
+    },
+    {
+      "id": 3,
+      "nextId": 4,
+      "pergunta": "Aproximadamente, qual porcentagem das empresas no mundo enfrenta dificuldade para encontrar profissionais qualificados?",
+      "respostas": [
+        { "id": "A", "texto": "Mais de 80%." },
+        { "id": "B", "texto": "Aproximadamente 50%." }
+      ],
+      "respostaCorreta": "A"
+    },
+    {
+      "id": 4,
+      "nextId": 5,
+      "pergunta": "Para o futuro do trabalho, qual fator é considerado mais importante?",
+      "respostas": [
+        { "id": "A", "texto": "A disposição constante para aprender, adaptar e reinventar." },
+        { "id": "B", "texto": "Apenas as habilidades já adquiridas até hoje serão suficientes para toda a carreira." }
+      ],
+      "respostaCorreta": "A"
+    },
+    {
+      "id": 5,
+      "nextId": 6,
+      "pergunta": "O cenário contemporâneo é caracterizado por:",
+      "respostas": [
+        { "id": "A", "texto": "Estabilidade e poucas incertezas nos âmbitos global e econômico." },
+        { "id": "B", "texto": "Incertezas, sobrecarga de informações e tensão constante." }
+      ],
+      "respostaCorreta": "B"
+    },
+    {
+      "id": 6,
+      "nextId": 7,
+      "pergunta": "Como o termo \"habilidades\" foi utilizado no contexto da exposição?",
+      "respostas": [
+        { "id": "A", "texto": "Referindo-se apenas às capacidades técnicas e certificações formais." },
+        { "id": "B", "texto": "Um conceito abrangente que integra atitudes, conhecimentos, competências e comportamentos." }
+      ],
+      "respostaCorreta": "B"
+    },
+    {
+      "id": 7,
+      "nextId": 8,
+      "pergunta": "Qual porcentagem aproximada dos trabalhadores precisará se requalificar segundo o Fórum Econômico Mundial?",
+      "respostas": [
+        { "id": "A", "texto": "Quase 60%." },
+        { "id": "B", "texto": "Apenas 30% dos trabalhadores mais jovens." }
+      ],
+      "respostaCorreta": "A"
+    },
+    {
+      "id": 8,
+      "nextId": 9,
+      "pergunta": "O que caracteriza o \"Letramento Tecnológico\"?",
+      "respostas": [
+        { "id": "A", "texto": "A habilidade de usar tecnologias digitais de forma crítica e consciente, compreendendo seu impacto social." },
+        { "id": "B", "texto": "A capacidade de operar softwares e dispositivos." }
+      ],
+      "respostaCorreta": "A"
+    },
+    {
+      "id": 9,
+      "nextId": 10,
+      "pergunta": "Qual é um dos principais desafios para as empresas em um futuro que se redesenha em tempo real?",
+      "respostas": [
+        { "id": "A", "texto": "Encontrar pessoas com as habilidades certas, devido à transformação acelerada do mercado." },
+        { "id": "B", "texto": "Organizar eventos corporativos, como festas de fim de ano ou reuniões trimestrais." }
+      ],
+      "respostaCorreta": "A"
+    },
+    {
+      "id": 10,
+      "nextId": 11,
+      "pergunta": "Em uma abordagem que prioriza habilidades, o que é mais valorizado nos profissionais?",
+      "respostas": [
+        { "id": "A", "texto": "O que cada pessoa é capaz de entregar e realmente sabe fazer, democratizando o acesso a oportunidades." },
+        { "id": "B", "texto": "Exclusivamente os cargos ocupados anteriormente e os certificados de cursos formais sem considerar as habilidades efetivamente aplicáveis." }
+      ],
+      "respostaCorreta": "A"
+    },
+    {
+      "id": 11,
+      "nextId": 12,
+      "pergunta": "Qual habilidade se relaciona a se recuperar de desafios, adaptar-se e responder rapidamente com estratégia em cenários incertos?",
+      "respostas": [
+        { "id": "A", "texto": "Resiliência, flexibilidade e agilidade." },
+        { "id": "B", "texto": "Pensamento analítico." }
+      ],
+      "respostaCorreta": "A"
+    },
+    {
+      "id": 12,
+      "nextId": 13,
+      "pergunta": "Como é definida a habilidade de Pensamento Criativo?",
+      "respostas": [
+        { "id": "A", "texto": "Capacidade de seguir rigorosamente protocolos estabelecidos para garantir resultados consistentes." },
+        { "id": "B", "texto": "Buscar soluções fora do óbvio, fazer conexões inesperadas e enxergar oportunidades, com disposição para experimentar e ajustar." }
+      ],
+      "respostaCorreta": "B"
+    },
+    {
+      "id": 13,
+      "nextId": 14,
+      "pergunta": "Qual das seguintes opções melhor descreve a \"Programação\" como habilidade?",
+      "respostas": [
+        { "id": "A", "texto": "Criar, testar e manter códigos para que computadores executem tarefas, exigindo pensamento lógico e criatividade." },
+        { "id": "B", "texto": "Inserir dados em uma planilha e criar gráficos básicos, sem a necessidade de um entendimento de sistemas ou lógica." }
+      ],
+      "respostaCorreta": "A"
+    },
+    {
+      "id": 14,
+      "nextId": 15,
+      "pergunta": "Em relação aos agentes de aprendizagem no mundo contemporâneo, qual é uma característica marcante?",
+      "respostas": [
+        { "id": "A", "texto": "A centralização do ensino em instituições formais como escolas e universidades." },
+        { "id": "B", "texto": "A atuação em sinergia de múltiplos agentes, como empresas, museus, organizações sociais, redes sociais e inteligências artificiais." }
+      ],
+      "respostaCorreta": "B"
+    },
+    {
+      "id": 15,
+      "nextId": 16,
+      "pergunta": "Além de escolas e universidades, quais outros agentes atuam em sinergia no ecossistema de aprendizagem contemporâneo?",
+      "respostas": [
+        { "id": "A", "texto": "Empresas, museus, organizações sociais, redes sociais, inteligência artificial e até mesmo núcleo familiar." },
+        { "id": "B", "texto": "Praças públicas e clubes recreativos." }
+      ],
+      "respostaCorreta": "A"
+    },
+    {
+      "id": 16,
+      "nextId": 17,
+      "pergunta": "Quais são os três movimentos considerados fundamentais para o crescimento em um mundo em constante transformação?",
+      "respostas": [
+        { "id": "A", "texto": "Memorizar, reproduzir e acumular dados." },
+        { "id": "B", "texto": "Aprender, desaprender e reaprender." }
+      ],
+      "respostaCorreta": "B"
+    },
+    {
+      "id": 17,
+      "nextId": 18,
+      "pergunta": "O que caracteriza a postura de \"aprendizagem ao longo da vida\"?",
+      "respostas": [
+        { "id": "A", "texto": "Manter uma visão estática sobre o próprio potencial, acreditando que o conhecimento se limita ao que foi aprendido na educação formal." },
+        { "id": "B", "texto": "Cultivar uma postura ativa, curiosa e flexível diante das mudanças do mundo." }
+      ],
+      "respostaCorreta": "B"
+    },
+    {
+      "id": 18,
+      "nextId": 19,
+      "pergunta": "O que significa \"desaprender\" no contexto do ciclo de aprendizagem contínua?",
+      "respostas": [
+        { "id": "A", "texto": "Esquecer completamente o que foi aprendido no passado." },
+        { "id": "B", "texto": "Questionar hábitos, desfazer preconceitos e abandonar métodos ultrapassados que já não são eficazes." }
+      ],
+      "respostaCorreta": "B"
+    },
+    {
+      "id": 19,
+      "nextId": -1,
+      "pergunta": "O que a \"Agência do Estudante\" representa no processo de aprendizagem?",
+      "respostas": [
+        { "id": "A", "texto": "É a capacidade do aprendiz ter voz, escolha e responsabilidade ativa sobre seu processo de aprendizagem, assumindo o protagonismo e cultivando autonomia." },
+        { "id": "B", "texto": "É o método pelo qual os professores controlam totalmente o percurso educacional dos alunos, sem espaço para a opinião individual." }
+      ],
+      "respostaCorreta": "A"
+    }
+  ]
+}
