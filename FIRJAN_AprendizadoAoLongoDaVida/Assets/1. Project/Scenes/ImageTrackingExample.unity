@@ -2234,8 +2234,6 @@ MonoBehaviour:
   currentDistanceAndAngleText: {fileID: 1267519114}
   currentID: -1
   imageIdMappings:
-  - referenceImageName: 0
-    imageId: 0
   - referenceImageName: 1
     imageId: 1
   - referenceImageName: 2
@@ -2274,6 +2272,8 @@ MonoBehaviour:
     imageId: 18
   - referenceImageName: 19
     imageId: 19
+  - referenceImageName: 20
+    imageId: 20
   autoResetOnSequenceEnd: 1
   maxDistanceMeters: 0.5
   maxAngleDeviationDegrees: 10
