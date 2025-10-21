@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
@@ -63,6 +64,9 @@ public class ARTrackingImageController : MonoBehaviour
 	[SerializeField]
 	private ARTrackedImageManager trackedImageManager;
 
+	[SerializeField]
+	private TMP_Text currentDistanceAndAngleText;
+
 	[Header("Configuração de IDs")]
 	[Tooltip("Último ID aceito pelo controlador. -1 indica que nenhuma imagem foi processada.")]
 	public int currentID = -1;
@@ -72,6 +76,17 @@ public class ARTrackingImageController : MonoBehaviour
 	[Tooltip("Define se, ao alcançar um mapeamento cujo NextTargetID seja negativo, o controlador volta automaticamente a aceitar qualquer imagem.")]
 	[SerializeField]
 	private bool autoResetOnSequenceEnd = true;
+
+	[Header("Filtros de Detecao")]
+	[Tooltip("Distancia maxima (em metros) para validar a leitura da imagem.")]
+	[SerializeField]
+	[Min(0f)]
+	private float maxDistanceMeters = 0.5f;
+
+	[Tooltip("Desvio maximo (0-90) em relacao a perpendicular da imagem para validar a leitura.")]
+	[SerializeField]
+	[Range(0f, 90f)]
+	private float maxAngleDeviationDegrees = 10f;
 
 	[Header("Eventos")]
 	[SerializeField]
@@ -329,6 +344,14 @@ public class ARTrackingImageController : MonoBehaviour
 			if (trackedImage.trackingState != TrackingState.Tracking)
 			{
 				notifiedImages.Remove(trackedImage.referenceImage.name);
+				UpdatePoseFeedback(float.NaN, float.NaN, float.NaN, false);
+				continue;
+			}
+
+			var withinConstraints = IsWithinPoseConstraints(trackedImage, out var distanceToCamera, out var angleToNormal, out var angleDeviation);
+			UpdatePoseFeedback(distanceToCamera, angleToNormal, angleDeviation, withinConstraints);
+			if (!withinConstraints)
+			{
 				continue;
 			}
 
@@ -377,6 +400,65 @@ public class ARTrackingImageController : MonoBehaviour
 
 			AcceptImage(mapping, referenceName);
 		}
+	}
+
+	private bool IsWithinPoseConstraints(ARTrackedImage trackedImage, out float distanceMeters, out float angleToNormalDegrees, out float angleDeviationDegrees)
+	{
+		distanceMeters = float.NaN;
+		angleToNormalDegrees = float.NaN;
+		angleDeviationDegrees = float.NaN;
+
+		if (trackedImage == null)
+		{
+			return false;
+		}
+
+		var mainCamera = Camera.main;
+		if (mainCamera == null)
+		{
+			return false;
+		}
+
+		var cameraTransform = mainCamera.transform;
+		var toCamera = cameraTransform.position - trackedImage.transform.position;
+		var sqrDistance = toCamera.sqrMagnitude;
+
+		if (sqrDistance <= float.Epsilon)
+		{
+			distanceMeters = 0f;
+			angleToNormalDegrees = 0f;
+			angleDeviationDegrees = 0f;
+			return maxAngleDeviationDegrees <= 0f;
+		}
+
+		distanceMeters = Mathf.Sqrt(sqrDistance);
+		var directionToCamera = toCamera / distanceMeters;
+		angleToNormalDegrees = Vector3.Angle(trackedImage.transform.forward, directionToCamera);
+		angleDeviationDegrees = Mathf.Abs(90f - angleToNormalDegrees);
+
+		if (maxDistanceMeters > 0f && distanceMeters > maxDistanceMeters)
+		{
+			return false;
+		}
+
+		return maxAngleDeviationDegrees <= 0f || angleDeviationDegrees <= maxAngleDeviationDegrees;
+	}
+
+	private void UpdatePoseFeedback(float distanceMeters, float angleToNormalDegrees, float angleDeviationDegrees, bool withinConstraints)
+	{
+		if (currentDistanceAndAngleText == null)
+		{
+			return;
+		}
+
+		if (float.IsNaN(distanceMeters) || float.IsNaN(angleToNormalDegrees) || float.IsNaN(angleDeviationDegrees))
+		{
+			currentDistanceAndAngleText.text = "Distancia: -- | Angulo: --";
+			return;
+		}
+
+		var status = withinConstraints ? "OK" : "fora";
+		currentDistanceAndAngleText.text = $"Distancia: {distanceMeters:0.00} m | Angulo Normal: {angleToNormalDegrees:0.0} deg | Desvio: {angleDeviationDegrees:0.0} deg ({status})";
 	}
 
 	private void AcceptImage(ImageIdMapping mapping, string referenceName)
@@ -430,6 +512,7 @@ public class ARTrackingImageController : MonoBehaviour
 		LastImageNameChanged?.Invoke(lastFoundImageName);
 		lastFoundImageSprite = null;
 		LastImageSpriteChanged?.Invoke(lastFoundImageSprite);
+		UpdatePoseFeedback(float.NaN, float.NaN, float.NaN, false);
 
 		if (!preserveCurrentId)
 		{
