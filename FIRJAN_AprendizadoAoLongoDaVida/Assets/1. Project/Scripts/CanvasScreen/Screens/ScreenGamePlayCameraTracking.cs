@@ -120,7 +120,7 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
 
         if (!ARTrackingImageController.HasAnsweredAnyQuestion)
         {
-            CameraTrackingText.text = "Aguarde. Responda à pergunta antes de seguir.";
+            CameraTrackingText.text = "Aguarde. Responda \u00E0 pergunta antes de seguir.";
             return;
         }
 
@@ -130,16 +130,17 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
             var houseIndex = ARTrackingImageController.GetBoardIndexById(nextId);
             if (houseIndex >= 0)
             {
-                CameraTrackingText.text = $"Vá para a casa {houseIndex}";
+                var displayIndex = houseIndex + 1;
+                CameraTrackingText.text = $"V\u00E1 para a casa {displayIndex}";
             }
             else
             {
-                CameraTrackingText.text = "Procure a próxima casa indicada.";
+                CameraTrackingText.text = "Procure a pr\u00F3xima casa indicada.";
             }
         }
         else
         {
-            CameraTrackingText.text = "Você concluiu o percurso!";
+            CameraTrackingText.text = "Voc\u00EA concluiu o percurso!";
         }
     }
 

@@ -98,6 +98,9 @@ public class ARTrackingImageController : MonoBehaviour
 	[SerializeField]
 	private UnityEvent onSequenceReset;
 
+	[SerializeField]
+	private UnityEvent onGameOver;
+
 	public event Action<int> ImageDetected;
 	public event Action<int> UnexpectedImageDetected;
 	public event Action SequenceReset;
@@ -106,6 +109,7 @@ public class ARTrackingImageController : MonoBehaviour
 	public event Action<int> LapCompleted;
 	public event Action<string> LastImageNameChanged;
 	public event Action<Sprite> LastImageSpriteChanged;
+	public event Action GameOver;
 
 	private readonly Dictionary<string, ImageIdMapping> nameToMapping = new(StringComparer.OrdinalIgnoreCase);
 	private readonly Dictionary<int, ImageIdMapping> idToMapping = new();
@@ -125,8 +129,11 @@ public class ARTrackingImageController : MonoBehaviour
 	private bool hasAnsweredQuestion;
 	private int lapsCompleted;
 	private int nextTargetHouseIndex = -1;
+	private int startingImageId = -1;
+	private int unwrappedStepProgress;
 	private string lastFoundImageName = string.Empty;
 	private Sprite lastFoundImageSprite;
+	private bool gameOverTriggered;
 
 	[SerializeField]
 	private QuestionEntry currentQuestion;
@@ -139,6 +146,7 @@ public class ARTrackingImageController : MonoBehaviour
 	public bool HasAnsweredAnyQuestion => hasAnsweredQuestion;
 	public int LapsCompleted => lapsCompleted;
 	public int NextTargetHouseIndex => nextTargetHouseIndex;
+	public int StartingImageId => startingImageId;
 	public string LastFoundImageName => lastFoundImageName;
 	public Sprite LastFoundImageSprite => lastFoundImageSprite;
 	public QuestionEntry CurrentQuestion => currentQuestion;
@@ -466,6 +474,11 @@ public class ARTrackingImageController : MonoBehaviour
 		notifiedImages.Add(referenceName);
 		gameStarted = true;
 		currentID = mapping.imageId;
+		if (startingImageId < 0)
+		{
+			startingImageId = mapping.imageId;
+			unwrappedStepProgress = 0;
+		}
 
 		awaitingQuizFeedback = true;
 		expectedNextImageId = -1;
@@ -508,6 +521,9 @@ public class ARTrackingImageController : MonoBehaviour
 		hasAnsweredQuestion = false;
 		lapsCompleted = 0;
 		nextTargetHouseIndex = -1;
+		startingImageId = -1;
+		unwrappedStepProgress = 0;
+		gameOverTriggered = false;
 		lastFoundImageName = string.Empty;
 		LastImageNameChanged?.Invoke(lastFoundImageName);
 		lastFoundImageSprite = null;
@@ -585,12 +601,18 @@ public class ARTrackingImageController : MonoBehaviour
 		var steps = (int)feedback;
 		var rawTarget = baseIndex + steps;
 		var wrappedIndex = PositiveMod(rawTarget, boardCount);
-		var lapDelta = (rawTarget - wrappedIndex) / boardCount;
-		if (lapDelta > 0)
+		var completedLaps = UpdateProgressAndCountLaps(steps, boardCount);
+		if (completedLaps > 0)
 		{
-			lapsCompleted += lapDelta;
-			Debug.Log("O jogo acabou: o jogador completou uma volta no tabuleiro.", this);
+			lapsCompleted += completedLaps;
+			Debug.Log($"O jogador completou {lapsCompleted} volta(s) ao retornar \u00E0 casa inicial.", this);
 			LapCompleted?.Invoke(lapsCompleted);
+			if (!gameOverTriggered)
+			{
+				gameOverTriggered = true;
+				onGameOver?.Invoke();
+				GameOver?.Invoke();
+			}
 		}
 
 		nextTargetHouseIndex = wrappedIndex;
@@ -613,6 +635,33 @@ public class ARTrackingImageController : MonoBehaviour
 			result += length;
 		}
 		return result;
+	}
+
+	private int UpdateProgressAndCountLaps(int steps, int boardCount)
+	{
+		var previousProgress = unwrappedStepProgress;
+		unwrappedStepProgress += steps;
+
+		if (boardCount <= 0 || startingImageId < 0 || steps <= 0)
+		{
+			return 0;
+		}
+
+		var nextThreshold = boardCount;
+		if (previousProgress >= 0)
+		{
+			var previousLoops = previousProgress / boardCount;
+			nextThreshold = (previousLoops + 1) * boardCount;
+		}
+
+		var completed = 0;
+		while (nextThreshold > previousProgress && unwrappedStepProgress >= nextThreshold)
+		{
+			completed++;
+			nextThreshold += boardCount;
+		}
+
+		return completed;
 	}
 
 	private void UpdateLastFoundSprite(XRReferenceImage referenceImage)
