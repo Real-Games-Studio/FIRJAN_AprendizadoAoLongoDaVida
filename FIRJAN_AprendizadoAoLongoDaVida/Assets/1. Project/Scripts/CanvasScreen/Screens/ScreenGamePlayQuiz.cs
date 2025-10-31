@@ -17,10 +17,12 @@ public class ScreenGamePlayQuiz : CanvasScreen
     [SerializeField] private Button Answer1Button;
     [SerializeField] private Button Answer2Button;
 
-    [SerializeField] [Tooltip("Tempo máximo em segundos para responder a uma pergunta antes de marcar inatividade.")]
+    [SerializeField]
+    [Tooltip("Tempo máximo em segundos para responder a uma pergunta antes de marcar inatividade.")]
     private float maxQuestionTime = 30f;
 
-    [SerializeField] [Tooltip("Define se, ao finalizar uma resposta, a próxima tela configurada deve ser chamada automaticamente.")]
+    [SerializeField]
+    [Tooltip("Define se, ao finalizar uma resposta, a próxima tela configurada deve ser chamada automaticamente.")]
     private bool autoAdvanceAfterAnswer = true;
 
     private ARTrackingImageController.QuestionEntry activeQuestion;
@@ -135,6 +137,7 @@ public class ScreenGamePlayQuiz : CanvasScreen
         }
 
         QuestionImage.enabled = sprite != null;
+        QuestionImage.transform.parent.GetComponent<Image>().enabled = sprite != null;
         QuestionImage.sprite = sprite;
     }
 

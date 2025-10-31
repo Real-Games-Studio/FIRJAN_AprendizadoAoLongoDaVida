@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using TMPro;
 using RealGames;
+using UnityEngine.SceneManagement;
 public class ScreenCanvasController : MonoBehaviour
 {
     public UnityEngine.UI.Image inactiveFeedback;
@@ -82,6 +83,11 @@ public class ScreenCanvasController : MonoBehaviour
         inactiveTimer = 0;
         if (inactiveFeedback != null) inactiveFeedback.fillAmount = 0f;
         ScreenManager.CallScreen(inicialScreen);
+    }
+    public void ReloadGame()
+    {
+        Debug.Log("Tempo de inatividade extrapolado!");
+        SceneManager.LoadScene(0);
     }
     public void OnScreenCall(string name)
     {

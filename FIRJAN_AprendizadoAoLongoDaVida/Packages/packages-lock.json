@@ -1,20 +1,5 @@
 {
   "dependencies": {
-    "com.kyrylokuzyk.arfoundationremote": {
-      "version": "file:../Assets/Plugins/ARFoundationRemoteInstaller/com.kyrylokuzyk.arfoundationremote.tgz",
-      "depth": 0,
-      "source": "local-tarball",
-      "dependencies": {
-        "com.unity.xr.arfoundation": "3.0.1",
-        "com.unity.xr.management": "3.0.4-preview.1",
-        "com.unity.modules.unitywebrequest": "1.0.0",
-        "com.unity.modules.imageconversion": "1.0.0",
-        "com.unity.ugui": "1.0.0",
-        "com.unity.modules.particlesystem": "1.0.0",
-        "com.unity.modules.vr": "1.0.0",
-        "com.unity.modules.imgui": "1.0.0"
-      }
-    },
     "com.unity.ai.navigation": {
       "version": "2.0.5",
       "depth": 0,
@@ -233,6 +218,14 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.unity.xr-content.xr-sim-environments": {
+      "version": "file:../ContentPackages\\com.unity.xr-content.xr-sim-environments-2.0.1.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.unity.xr.arfoundation": "6.0.0-pre.3"
+      }
     },
     "com.unity.xr.arcore": {
       "version": "6.0.6",

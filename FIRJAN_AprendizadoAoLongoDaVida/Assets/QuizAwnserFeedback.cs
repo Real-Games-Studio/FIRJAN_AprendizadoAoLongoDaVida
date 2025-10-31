@@ -12,6 +12,12 @@ public class QuizAwnserFeedback : MonoBehaviour
     public TMP_Text PointsText; // texto para mostrar quantas casas deve se mover
     public CanvasGroup canvasGroup; // deve se ativar e desativar conforme o feedback
 
+    [Header("Imagens de Feedback")]
+    [SerializeField]
+    private GameObject correctFeedbackImage;
+    [SerializeField]
+    private GameObject wrongFeedbackImage;
+
     [Header("Cores")]
     public Color CorrectColor = Color.green;
     public Color WrongColor = Color.red;
@@ -39,6 +45,8 @@ public class QuizAwnserFeedback : MonoBehaviour
     {
         SetCanvasGroup(false);
 
+        SetStateImages(false, false);
+
         if (MainText != null)
         {
             MainText.text = string.Empty;
@@ -52,9 +60,11 @@ public class QuizAwnserFeedback : MonoBehaviour
 
     private void ApplyVisuals(ARTrackingImageController.QuizFeedback feedback, float elapsedSeconds)
     {
+        var targetColor = ResolveColor(feedback);
+
         if (backgroundToColor != null)
         {
-            backgroundToColor.color = ResolveColor(feedback);
+            backgroundToColor.color = targetColor;
         }
 
         if (MainText != null)
@@ -66,6 +76,8 @@ public class QuizAwnserFeedback : MonoBehaviour
         {
             PointsText.text = ResolvePointsText(feedback);
         }
+
+        UpdateStateImages(feedback);
     }
 
     private void SetCanvasGroup(bool visible)
@@ -116,5 +128,32 @@ public class QuizAwnserFeedback : MonoBehaviour
         return houses > 0
             ? $"Avance {absHouses} {casaPlural}!"
             : $"Volte {absHouses} {casaPlural}!";
+    }
+
+    private void UpdateStateImages(ARTrackingImageController.QuizFeedback feedback)
+    {
+        var showCorrect = IsCorrectFeedback(feedback);
+        var showWrong = feedback == ARTrackingImageController.QuizFeedback.Error;
+        SetStateImages(showCorrect, showWrong);
+    }
+
+    private void SetStateImages(bool correctActive, bool wrongActive)
+    {
+        if (correctFeedbackImage != null)
+        {
+            correctFeedbackImage.SetActive(correctActive);
+        }
+
+        if (wrongFeedbackImage != null)
+        {
+            wrongFeedbackImage.SetActive(wrongActive);
+        }
+    }
+
+    private static bool IsCorrectFeedback(ARTrackingImageController.QuizFeedback feedback)
+    {
+        return feedback == ARTrackingImageController.QuizFeedback.CorrectFast
+               || feedback == ARTrackingImageController.QuizFeedback.CorrectMedium
+               || feedback == ARTrackingImageController.QuizFeedback.CorrectSlow;
     }
 }
