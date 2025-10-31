@@ -126,8 +126,8 @@ public class QuizAwnserFeedback : MonoBehaviour
         var absHouses = Mathf.Abs(houses);
         var casaPlural = absHouses > 1 ? "casas" : "casa";
         return houses > 0
-            ? $"Avance {absHouses} {casaPlural}!"
-            : $"Volte {absHouses} {casaPlural}!";
+            ? $"Avance<BR>{absHouses}<BR>{casaPlural}"
+            : $"Volte<BR>{absHouses}<BR>{casaPlural}!";
     }
 
     private void UpdateStateImages(ARTrackingImageController.QuizFeedback feedback)

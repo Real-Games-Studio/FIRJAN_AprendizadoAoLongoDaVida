@@ -7,6 +7,7 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
     [SerializeField] private TMP_Text CameraTrackingText;
 
     [SerializeField] private TMP_Text LastFoundImage;
+    [SerializeField] private TMP_Text currentFoundImage;
 
     private void Awake()
     {
@@ -144,17 +145,28 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
 
     private void UpdateLastFoundImageLabel()
     {
-        UpdateLastFoundImageLabel(ARTrackingImageController != null ? ARTrackingImageController.LastFoundImageName : string.Empty);
+        var imageName = ARTrackingImageController != null ? ARTrackingImageController.LastFoundImageName : string.Empty;
+        UpdateLastFoundImageLabel(imageName);
     }
 
     private void UpdateLastFoundImageLabel(string imageName)
     {
-        if (LastFoundImage == null)
+        if (LastFoundImage != null)
+        {
+            LastFoundImage.text = string.IsNullOrEmpty(imageName) ? string.Empty : imageName;
+        }
+
+        UpdateCurrentFoundImageLabel(imageName);
+    }
+
+    private void UpdateCurrentFoundImageLabel(string imageName)
+    {
+        if (currentFoundImage == null)
         {
             return;
         }
 
-        LastFoundImage.text = string.IsNullOrEmpty(imageName) ? string.Empty : imageName;
+        currentFoundImage.text = string.IsNullOrEmpty(imageName) ? string.Empty : imageName;
     }
 
     private void EnsureController()
