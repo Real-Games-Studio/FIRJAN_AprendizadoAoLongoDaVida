@@ -606,6 +606,9 @@ public class ARTrackingImageController : MonoBehaviour
 		{
 			lapsCompleted += completedLaps;
 			Debug.Log($"O jogador completou {lapsCompleted} volta(s) ao retornar \u00E0 casa inicial.", this);
+
+			ScreenCanvasController.instance.CallAnyScreenByName("gameover");
+
 			LapCompleted?.Invoke(lapsCompleted);
 			if (!gameOverTriggered)
 			{
