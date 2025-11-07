@@ -1,0 +1,2 @@
+C:\_Real Games\FIRJAN\FIRJAN_AprendizadoAoLongoDaVida\FIRJAN_AprendizadoAoLongoDaVida\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\_Real Games\FIRJAN\FIRJAN_AprendizadoAoLongoDaVida\FIRJAN_AprendizadoAoLongoDaVida\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt
