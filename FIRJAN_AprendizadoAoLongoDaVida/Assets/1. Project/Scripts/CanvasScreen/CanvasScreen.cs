@@ -160,15 +160,15 @@ public class CanvasScreen: MonoBehaviour
 
     public virtual void CallNextScreen()
     {
-        ScreenManager.CallScreen(data.nextScreenName);
+        ScreenManager.SetCallScreen(data.nextScreenName);
     }
     public virtual void CallPreviusScreen()
     {
-        ScreenManager.CallScreen(data.previusScreenName);
+        ScreenManager.SetCallScreen(data.previusScreenName);
     }
 
     public virtual void CallScreenByName(string _name)
     {
-        ScreenManager.CallScreen(_name);
+        ScreenManager.SetCallScreen(_name);
     }
 }

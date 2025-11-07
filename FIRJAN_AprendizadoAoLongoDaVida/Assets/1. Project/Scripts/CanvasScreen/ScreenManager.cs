@@ -8,9 +8,21 @@ public static class ScreenManager
 {
     public static Action OnReset;
     public static Action<string> CallScreen;
+    public static Func<string, bool> ScreenChangeGuard;
     public static string currentScreenName;
+
     public static void SetCallScreen(string name)
     {
+        if (string.IsNullOrEmpty(name))
+        {
+            return;
+        }
+
+        if (ScreenChangeGuard != null && !ScreenChangeGuard.Invoke(name))
+        {
+            return;
+        }
+
         CallScreen?.Invoke(name);
         currentScreenName = name;
     }

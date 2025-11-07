@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,18 +17,23 @@ public class ScreenCanvasController : MonoBehaviour
 
     public CanvasGroup DEBUG_CANVAS;
     public TMP_Text timeOut;
+    private bool isScreenLocked;
+    private string lockedScreenName;
 
     private void OnEnable()
     {
         // Registra o m�todo CallScreenListner como ouvinte do evento CallScreen
         ScreenManager.CallScreen += OnScreenCall;
-
+        ScreenManager.ScreenChangeGuard = ShouldAllowScreenChange;
     }
     private void OnDisable()
     {
         // Remove o m�todo CallScreenListner como ouvinte do evento CallScreen
         ScreenManager.CallScreen -= OnScreenCall;
-
+        if (ScreenManager.ScreenChangeGuard == ShouldAllowScreenChange)
+        {
+            ScreenManager.ScreenChangeGuard = null;
+        }
     }
     // Start is called before the first frame update
     void Start()
@@ -40,6 +46,12 @@ public class ScreenCanvasController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isScreenLocked)
+        {
+            ResetInactivity();
+            return;
+        }
+
         // If any click or touch, reset inactivity
         if (Input.GetMouseButtonDown(0) || Input.touchCount > 0)
         {
@@ -79,14 +91,19 @@ public class ScreenCanvasController : MonoBehaviour
     }
     public void ResetGame()
     {
+        if (isScreenLocked)
+        {
+            Debug.Log($"ResetGame ignorado: tela bloqueada em {lockedScreenName}.");
+            return;
+        }
         Debug.Log("Tempo de inatividade extrapolado!");
-        inactiveTimer = 0;
-        if (inactiveFeedback != null) inactiveFeedback.fillAmount = 0f;
-        ScreenManager.CallScreen(inicialScreen);
+        ResetInactivity();
+        ScreenManager.SetCallScreen(inicialScreen);
     }
     public void ReloadGame()
     {
         Debug.Log("Tempo de inatividade extrapolado!");
+        UnlockScreen();
         SceneManager.LoadScene(0);
     }
     public void OnScreenCall(string name)
@@ -104,6 +121,50 @@ public class ScreenCanvasController : MonoBehaviour
 
     public void CallAnyScreenByName(string name)
     {
-        ScreenManager.CallScreen(name);
+        ScreenManager.SetCallScreen(name);
+    }
+
+    public void LockScreen(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            return;
+        }
+
+        lockedScreenName = name;
+        isScreenLocked = true;
+        ResetInactivity();
+
+        if (!string.Equals(currentScreen, name, StringComparison.OrdinalIgnoreCase))
+        {
+            ScreenManager.SetCallScreen(name);
+        }
+    }
+
+    public void UnlockScreen()
+    {
+        if (!isScreenLocked)
+        {
+            return;
+        }
+
+        isScreenLocked = false;
+        lockedScreenName = string.Empty;
+        ResetInactivity();
+    }
+
+    private bool ShouldAllowScreenChange(string targetScreen)
+    {
+        if (!isScreenLocked)
+        {
+            return true;
+        }
+
+        var sameScreen = string.Equals(targetScreen, lockedScreenName, StringComparison.OrdinalIgnoreCase);
+        if (!sameScreen)
+        {
+            Debug.Log($"Troca de tela para \"{targetScreen}\" ignorada. Tela bloqueada em \"{lockedScreenName}\".");
+        }
+        return sameScreen;
     }
 }
