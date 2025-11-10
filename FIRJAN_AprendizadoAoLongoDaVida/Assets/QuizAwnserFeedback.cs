@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -9,7 +10,7 @@ public class QuizAwnserFeedback : MonoBehaviour
     public Image backgroundToColor;
     public TMP_Text MainText; // texto para correto ou incorreto
     [FormerlySerializedAs("pointsText")]
-    public TMP_Text PointsText; // texto para mostrar quantas casas deve se mover
+    public TMP_Text PointsText; // texto para mostrar quantas casas deve se mover (ex.: AVANCE<BR>3<BR>CASAS)
     public CanvasGroup canvasGroup; // deve se ativar e desativar conforme o feedback
 
     [Header("Imagens de Feedback")]
@@ -124,10 +125,9 @@ public class QuizAwnserFeedback : MonoBehaviour
         }
 
         var absHouses = Mathf.Abs(houses);
-        var casaPlural = absHouses > 1 ? "casas" : "casa";
-        return houses > 0
-            ? $"Avance<BR>{absHouses}<BR>{casaPlural}"
-            : $"Volte<BR>{absHouses}<BR>{casaPlural}!";
+        var prefix = ResolveMovementPrefix(houses > 0);
+        var unitLabel = ResolveUnitLabel(absHouses);
+        return $"{prefix}<BR>{absHouses}<BR>{unitLabel}";
     }
 
     private void UpdateStateImages(ARTrackingImageController.QuizFeedback feedback)
@@ -155,5 +155,36 @@ public class QuizAwnserFeedback : MonoBehaviour
         return feedback == ARTrackingImageController.QuizFeedback.CorrectFast
                || feedback == ARTrackingImageController.QuizFeedback.CorrectMedium
                || feedback == ARTrackingImageController.QuizFeedback.CorrectSlow;
+    }
+
+    private string ResolveMovementPrefix(bool forward)
+    {
+        if (IsPortugueseLanguage())
+        {
+            return forward ? "AVANCE" : "VOLTE";
+        }
+
+        return forward ? "ADVANCE" : "GO BACK";
+    }
+
+    private string ResolveUnitLabel(int amount)
+    {
+        var plural = amount > 1;
+        if (IsPortugueseLanguage())
+        {
+            return plural ? "CASAS" : "CASA";
+        }
+
+        return plural ? "SPACES" : "SPACE";
+    }
+
+    private bool IsPortugueseLanguage()
+    {
+        var fallbackLang = LocalizationManager.instance != null && !string.IsNullOrEmpty(LocalizationManager.instance.defaultLang)
+            ? LocalizationManager.instance.defaultLang
+            : "pt";
+
+        var currentLang = PlayerPrefs.GetString("lang", fallbackLang);
+        return !string.IsNullOrEmpty(currentLang) && currentLang.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
     }
 }

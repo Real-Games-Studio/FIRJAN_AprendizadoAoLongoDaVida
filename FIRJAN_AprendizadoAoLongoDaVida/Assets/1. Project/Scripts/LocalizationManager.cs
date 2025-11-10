@@ -42,8 +42,9 @@ public class LocalizationManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(this.gameObject);
 
-        string lang = PlayerPrefs.GetString("lang", defaultLang);
-        LoadLanguage(lang);
+        // Always start sessions in Portuguese, regardless of previous PlayerPrefs.
+        PlayerPrefs.SetString("lang", defaultLang);
+        LoadLanguage(defaultLang);
     }
 
     public void SetLanguage(string lang)

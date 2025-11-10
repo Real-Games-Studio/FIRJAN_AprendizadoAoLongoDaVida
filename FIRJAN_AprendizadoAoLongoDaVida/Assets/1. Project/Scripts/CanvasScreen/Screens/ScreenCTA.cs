@@ -1,9 +1,14 @@
+using TMPro;
 using UnityEngine;
 
 public class ScreenCTA : CanvasScreen
 {
 	[SerializeField]
 	private ARTrackingImageController trackingController;
+	[Header("Localization")]
+	[SerializeField] private TMP_Text titleText;
+	[SerializeField] private TMP_Text descriptionText;
+	[SerializeField] private TMP_Text buttonLabelText;
 
 	public override void OnValidate()
 	{
@@ -27,6 +32,14 @@ public class ScreenCTA : CanvasScreen
 	{
 		UpdateTrackingState(false);
 		base.TurnOff();
+	}
+
+	protected override void OnLocalizationApplied()
+	{
+		base.OnLocalizationApplied();
+		SetLocalizedText(titleText, "cta.title");
+		SetLocalizedText(descriptionText, "cta.description");
+		SetLocalizedText(buttonLabelText, "cta.button");
 	}
 
 	private void EnsureTrackingController()

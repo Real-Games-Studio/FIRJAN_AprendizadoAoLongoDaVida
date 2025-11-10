@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
 
     [SerializeField] private TMP_Text LastFoundImage;
     [SerializeField] private TMP_Text currentFoundImage;
+
+    [SerializeField] private AudioSource findSound;
 
     private void Awake()
     {
@@ -51,6 +54,7 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
         ARTrackingImageController.SequenceReset += HandleSequenceReset;
         ARTrackingImageController.QuestionChanged += HandleQuestionChanged;
         ARTrackingImageController.LastImageNameChanged += HandleLastImageNameChanged;
+        ARTrackingImageController.ImageDetected += HandleImageDetected;
     }
 
     private void Unsubscribe()
@@ -64,6 +68,7 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
         ARTrackingImageController.SequenceReset -= HandleSequenceReset;
         ARTrackingImageController.QuestionChanged -= HandleQuestionChanged;
         ARTrackingImageController.LastImageNameChanged -= HandleLastImageNameChanged;
+        ARTrackingImageController.ImageDetected -= HandleImageDetected;
     }
 
     private void HandleNextTargetChanged(int _)
@@ -99,6 +104,16 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
         UpdateLastFoundImageLabel(imageName);
     }
 
+    private void HandleImageDetected(int _)
+    {
+        if (findSound == null)
+        {
+            return;
+        }
+
+        findSound.Play();
+    }
+
     private void UpdateCameraTrackingText()
     {
         if (CameraTrackingText == null)
@@ -114,13 +129,13 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
 
         if (!ARTrackingImageController.GameStarted)
         {
-            CameraTrackingText.text = "Posicione-se em qualquer casa";
+            CameraTrackingText.text = ResolveMessage("Posicione-se em qualquer casa", "Stand on any tile");
             return;
         }
 
         if (!ARTrackingImageController.HasAnsweredAnyQuestion)
         {
-            CameraTrackingText.text = "Aguarde. Responda \u00E0 pergunta antes de seguir.";
+            CameraTrackingText.text = ResolveMessage("Aguarde. Responda \u00E0 pergunta antes de seguir.", "Hold on. Answer the question before moving forward.");
             return;
         }
 
@@ -131,16 +146,17 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
             if (houseIndex >= 0)
             {
                 var displayIndex = houseIndex + 1;
-                CameraTrackingText.text = $"V\u00E1 para a casa {displayIndex}";
+                var template = ResolveMessage("V\u00E1 para a casa {0}", "Go to tile {0}");
+                CameraTrackingText.text = string.Format(template, displayIndex);
             }
             else
             {
-                CameraTrackingText.text = "Procure a pr\u00F3xima casa indicada.";
+                CameraTrackingText.text = ResolveMessage("Procure a pr\u00F3xima casa indicada.", "Look for the indicated next tile.");
             }
         }
         else
         {
-            CameraTrackingText.text = "Voc\u00EA concluiu o percurso!";
+            CameraTrackingText.text = ResolveMessage("Voc\u00EA concluiu o percurso!", "You have finished the route!");
         }
     }
 
@@ -182,5 +198,17 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
 #else
         ARTrackingImageController = FindObjectOfType<ARTrackingImageController>();
 #endif
+    }
+
+    private bool IsPortugueseLanguage()
+    {
+        var fallback = LocalizationManager.instance != null ? LocalizationManager.instance.defaultLang : "pt";
+        var lang = PlayerPrefs.GetString("lang", fallback);
+        return !string.IsNullOrEmpty(lang) && lang.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private string ResolveMessage(string portuguese, string english)
+    {
+        return IsPortugueseLanguage() ? portuguese : english;
     }
 }

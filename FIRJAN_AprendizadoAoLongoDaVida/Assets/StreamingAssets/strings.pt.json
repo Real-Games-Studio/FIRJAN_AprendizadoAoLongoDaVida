@@ -1,16 +1,13 @@
 {
   "items": [
     { "key": "cta.title", "value": "Qual o Caminho?" },
-    { "key": "cta.description", "value": "Toque para começar" },
+    { "key": "cta.description", "value": "Caminhe pelo tabuleiro e teste seus<br>conhecimentos sobre o futuro do<br>trabalho e as habilidades que vão<br>moldar o amanhã.<br><br>Escaneie cada imagem, responda às perguntas e avance somente quando acertar. Aprenda, desafie-se<br>e descubra onde você já está<br>preparado e onde pode evoluir." },
     { "key": "cta.button", "value": "Começar" },
-	
-    { "key": "narrativa.title", "value": "Qual o Caminho?" },
-    { "key": "narrativa.description", "value": "Narrativa..." },
-    { "key": "narrativa.button", "value": "Vamos Lá!" },
-	
-	
-    { "key": "gameover.title", "value": "FIM" },
-    { "key": "gameover.lastMessage", "value": "Suas decisões impactaram de maneira positiva nosso crescimento. Habilidades de Pensamento crítico, tomada de decisão e solução de problemas foram adicionados ao seu cartão de progresso" },
+
+     { "key": "tracking.msg", "value": "POSICIONE-SE EM\nQUALQUER CASA" },
+
+    { "key": "gameover.title", "value": "PARABÉNS" },
+    { "key": "gameover.lastMessage", "value": "Você completou o ciclo de aprendizado, mas ele continua!\nPara onde você vai agora?" },
     { "key": "gameover.p1", "value": "Tomada de Decisão" },
     { "key": "gameover.p2", "value": "Pensamento Crítico" },
     { "key": "gameover.p3", "value": "Solução de Problemas" },

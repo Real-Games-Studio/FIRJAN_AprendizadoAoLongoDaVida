@@ -1,18 +1,14 @@
 {
   "items": [
   { "key": "cta.title", "value": "What's Your Path?" },
-  { "key": "cta.description", "value": "Tap to start" },
+  { "key": "cta.description", "value": "Walk across the board and test your knowledge about the future of work and the skills that will shape tomorrow.\n\nScan each image, answer the questions, and move forward only when you get it right. Learn, challenge yourself, and discover where you are already prepared and where you can evolve." },
   { "key": "cta.button", "value": "Start" },
 
-  { "key": "narrativa.title", "value": "What's Your Path?" },
-  { "key": "narrativa.description", "value": "Narrative in English..." },
-  { "key": "narrativa.button", "value": "Let's go!" },
+  { "key": "tracking.msg", "value": "POSITION YOURSELF IN ANY HOUSE" },
 
-  { "key": "gameover.title", "value": "Game Over" },
-  { "key": "gameover.lastMessage", "value": "Your decisions had a positive impact on our growth. Critical thinking, decision-making, and problem-solving skills have been added to your progress card." },
-  { "key": "gameover.p1", "value": "Decision Making" },
-  { "key": "gameover.p2", "value": "Critical Thinking" },
-  { "key": "gameover.p3", "value": "Problem Solving" },
+
+  { "key": "gameover.title", "value": "Congratulations!" },
+  { "key": "gameover.lastMessage", "value": "You completed the learning cycle, but it continues!\nWhere will you go now?" },
 
 
     { "key": "end.message", "value": "Thanks! Your data has been saved to your profile!" },

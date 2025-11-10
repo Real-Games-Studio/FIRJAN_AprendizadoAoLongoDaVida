@@ -46,10 +46,16 @@ public class ARTrackingImageController : MonoBehaviour
 		public string pergunta;
 		public AnswerEntry[] respostas;
 		public string respostaCorreta;
+		public string correctAnswer;
 
 		public string GetCorrectAnswerId()
 		{
-			return respostaCorreta;
+			if (!string.IsNullOrEmpty(respostaCorreta))
+			{
+				return respostaCorreta;
+			}
+
+			return correctAnswer;
 		}
 	}
 
@@ -138,7 +144,16 @@ public class ARTrackingImageController : MonoBehaviour
 	[SerializeField]
 	private QuestionEntry currentQuestion;
 
-	private const string GameDataFileName = "gamedata.pt.json";
+	[SerializeField]
+	[Tooltip("Nome base dos arquivos de perguntas, sem sufixos de idioma (ex.: gamedata).")]
+	private string gameDataBaseName = "gamedata";
+
+	[SerializeField]
+	[Tooltip("Idioma utilizado como fallback quando nenhuma prefer��ncia estiver definida.")]
+	private string fallbackLanguage = "pt";
+
+	private Coroutine gameDataLoadRoutine;
+	private string lastLoadedGameDataFile;
 
 	public int ExpectedNextImageId => expectedNextImageId;
 	public bool GameStarted => gameStarted;
@@ -177,7 +192,8 @@ public class ARTrackingImageController : MonoBehaviour
 
 	private IEnumerator Start()
 	{
-		yield return LoadGameDataAsync();
+		yield return LoadGameDataAndNotify(GetCurrentLanguage());
+		SubscribeToLocalizationChanges();
 	}
 
 	private void OnEnable()
@@ -196,6 +212,87 @@ public class ARTrackingImageController : MonoBehaviour
 		}
 
 		ResetSequenceInternal(false, true, false);
+	}
+
+	private void OnDestroy()
+	{
+		if (LocalizationManager.instance != null)
+		{
+			LocalizationManager.instance.OnLanguageChanged -= HandleLanguageChanged;
+		}
+	}
+
+	private void SubscribeToLocalizationChanges()
+	{
+		if (LocalizationManager.instance != null)
+		{
+			LocalizationManager.instance.OnLanguageChanged += HandleLanguageChanged;
+			return;
+		}
+
+		StartCoroutine(WaitForLocalizationAndSubscribe());
+	}
+
+	private IEnumerator WaitForLocalizationAndSubscribe()
+	{
+		while (LocalizationManager.instance == null)
+		{
+			yield return null;
+		}
+
+		LocalizationManager.instance.OnLanguageChanged += HandleLanguageChanged;
+	}
+
+	private void HandleLanguageChanged()
+	{
+		StartGameDataReload();
+	}
+
+	private void StartGameDataReload()
+	{
+		if (gameDataLoadRoutine != null)
+		{
+			StopCoroutine(gameDataLoadRoutine);
+		}
+
+		gameDataLoadRoutine = StartCoroutine(LoadGameDataAndNotify(GetCurrentLanguage()));
+	}
+
+	private IEnumerator LoadGameDataAndNotify(string language)
+	{
+		yield return LoadGameDataAsync(language);
+		gameDataLoadRoutine = null;
+		RefreshCurrentQuestionAfterReload();
+	}
+
+	private void RefreshCurrentQuestionAfterReload()
+	{
+		if (!dataLoaded)
+		{
+			return;
+		}
+
+		if (currentID >= 0 && questionById.TryGetValue(currentID, out var question))
+		{
+			currentQuestion = question;
+		}
+		else if (currentID < 0)
+		{
+			currentQuestion = null;
+		}
+
+		QuestionChanged?.Invoke(currentQuestion);
+	}
+
+	private string GetCurrentLanguage()
+	{
+		var defaultLang = !string.IsNullOrEmpty(fallbackLanguage) ? fallbackLanguage : "pt";
+		if (LocalizationManager.instance != null && !string.IsNullOrEmpty(LocalizationManager.instance.defaultLang))
+		{
+			defaultLang = LocalizationManager.instance.defaultLang;
+		}
+
+		return PlayerPrefs.GetString("lang", defaultLang);
 	}
 
 	private void BuildLookup()
@@ -221,43 +318,145 @@ public class ARTrackingImageController : MonoBehaviour
 		}
 	}
 
-	private IEnumerator LoadGameDataAsync()
+	private IEnumerator LoadGameDataAsync(string language)
 	{
-		var path = Path.Combine(Application.streamingAssetsPath, GameDataFileName);
+		var candidates = BuildGameDataCandidateList(language);
 		string json = null;
+		string loadedFile = null;
 
-#if UNITY_ANDROID && !UNITY_EDITOR
-		using (var request = UnityWebRequest.Get(path))
+		foreach (var candidate in candidates)
 		{
-			yield return request.SendWebRequest();
-
-			if (request.result != UnityWebRequest.Result.Success)
+			if (string.IsNullOrWhiteSpace(candidate))
 			{
-				Debug.LogError($"Falha ao carregar {GameDataFileName}: {request.error}");
-				yield break;
+				continue;
 			}
 
-			json = request.downloadHandler.text;
-		}
-#else
-		try
-		{
-			json = File.ReadAllText(path);
-		}
-		catch (Exception e)
-		{
-			Debug.LogError($"Falha ao carregar {GameDataFileName}: {e.Message}");
-		}
+			var path = Path.Combine(Application.streamingAssetsPath, candidate);
 
-		yield return null;
+#if UNITY_ANDROID && !UNITY_EDITOR
+			using (var request = UnityWebRequest.Get(path))
+			{
+				yield return request.SendWebRequest();
+
+				if (request.result != UnityWebRequest.Result.Success)
+				{
+					Debug.LogWarning($"Falha ao carregar {candidate}: {request.error}");
+					continue;
+				}
+
+				json = request.downloadHandler.text;
+				loadedFile = candidate;
+				break;
+			}
+#else
+			if (!File.Exists(path))
+			{
+				continue;
+			}
+
+			try
+			{
+				json = File.ReadAllText(path);
+				loadedFile = candidate;
+			}
+			catch (Exception e)
+			{
+				Debug.LogWarning($"Falha ao carregar {candidate}: {e.Message}");
+				continue;
+			}
+
+			yield return null;
+			if (!string.IsNullOrWhiteSpace(json))
+			{
+				break;
+			}
 #endif
+		}
 
 		if (string.IsNullOrWhiteSpace(json))
 		{
+			Debug.LogError($"N\u00E3o foi poss\u00EDvel carregar arquivos de perguntas para o idioma '{language}'.");
 			yield break;
 		}
 
+		lastLoadedGameDataFile = loadedFile;
 		ApplyGameData(json);
+	}
+
+	private List<string> BuildGameDataCandidateList(string language)
+	{
+		var candidates = new List<string>();
+		var unique = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+		var baseName = string.IsNullOrWhiteSpace(gameDataBaseName)
+			? "gamedata"
+			: Path.GetFileNameWithoutExtension(gameDataBaseName);
+
+		var ext = Path.GetExtension(gameDataBaseName);
+		if (string.IsNullOrEmpty(ext))
+		{
+			ext = ".json";
+		}
+
+		string Format(string langCode)
+		{
+			return string.IsNullOrEmpty(langCode)
+				? $"{baseName}{ext}"
+				: $"{baseName}.{langCode}{ext}";
+		}
+
+		void Add(string candidate)
+		{
+			if (string.IsNullOrWhiteSpace(candidate))
+			{
+				return;
+			}
+
+			if (unique.Add(candidate))
+			{
+				candidates.Add(candidate);
+			}
+		}
+
+		if (!string.IsNullOrWhiteSpace(language))
+		{
+			var normalizedLanguage = language.Trim().ToLowerInvariant();
+			Add(Format(normalizedLanguage));
+
+			var tokens = normalizedLanguage.Split(new[] { '-', '_', '.' }, StringSplitOptions.RemoveEmptyEntries);
+			foreach (var token in tokens)
+			{
+				Add(Format(token));
+			}
+		}
+
+		if (!string.IsNullOrWhiteSpace(fallbackLanguage))
+		{
+			Add(Format(fallbackLanguage.Trim().ToLowerInvariant()));
+		}
+
+		Add($"{baseName}{ext}");
+		Add("gamedata.json");
+		Add("gamedata.pt.json");
+		Add("gamedata.en.json");
+
+		return candidates;
+	}
+
+	private string GetActiveGameDataFileName()
+	{
+		if (!string.IsNullOrEmpty(lastLoadedGameDataFile))
+		{
+			return lastLoadedGameDataFile;
+		}
+
+		var sanitized = string.IsNullOrWhiteSpace(gameDataBaseName) ? "gamedata" : Path.GetFileName(gameDataBaseName);
+		if (string.IsNullOrEmpty(Path.GetExtension(sanitized)))
+		{
+			sanitized += ".json";
+		}
+
+		return sanitized;
 	}
 
 	private void ApplyGameData(string json)
@@ -289,33 +488,31 @@ public class ARTrackingImageController : MonoBehaviour
 		}
 		catch (Exception e)
 		{
-			Debug.LogError($"Erro ao interpretar {GameDataFileName}: {e.Message}");
+			Debug.LogError($"Erro ao interpretar {GetActiveGameDataFileName()}: {e.Message}");
 		}
 	}
 
 	private void NormalizeQuestion(QuestionEntry question)
 	{
-		if (!string.IsNullOrEmpty(question.respostaCorreta))
+		if (string.IsNullOrEmpty(question.respostaCorreta) && !string.IsNullOrEmpty(question.correctAnswer))
+		{
+			question.respostaCorreta = question.correctAnswer;
+		}
+
+		if (question.respostas == null)
 		{
 			return;
 		}
 
-		const string marker = "\"correctAnswer\":";
-		var rawJson = JsonUtility.ToJson(question);
-		var index = rawJson.IndexOf(marker, StringComparison.Ordinal);
-		if (index < 0)
+		foreach (var answer in question.respostas)
 		{
-			return;
-		}
+			if (answer == null || string.IsNullOrEmpty(answer.texto))
+			{
+				continue;
+			}
 
-		var start = index + marker.Length;
-		var end = rawJson.IndexOf('"', start + 1);
-		if (end <= start)
-		{
-			return;
+			answer.texto = answer.texto.Replace("\\n", "\n");
 		}
-
-		question.respostaCorreta = rawJson.Substring(start + 1, end - start - 1);
 	}
 
 	private void ValidateImageQuestionLinks()
@@ -324,7 +521,7 @@ public class ARTrackingImageController : MonoBehaviour
 		{
 			if (!questionById.ContainsKey(mapping.imageId))
 			{
-				Debug.LogWarning($"Nenhuma pergunta encontrada para o ID de imagem {mapping.imageId}. Verifique o arquivo {GameDataFileName}.");
+				Debug.LogWarning($"Nenhuma pergunta encontrada para o ID de imagem {mapping.imageId}. Verifique o arquivo {GetActiveGameDataFileName()}.");
 			}
 		}
 	}
@@ -491,7 +688,7 @@ public class ARTrackingImageController : MonoBehaviour
 		else
 		{
 			currentQuestion = null;
-			Debug.LogWarning($"Imagem {mapping.referenceImageName} (ID {mapping.imageId}) não possui pergunta correspondente no {GameDataFileName}.");
+			Debug.LogWarning($"Imagem {mapping.referenceImageName} (ID {mapping.imageId}) não possui pergunta correspondente no {GetActiveGameDataFileName()}.");
 			awaitingQuizFeedback = false;
 		}
 
@@ -695,14 +892,24 @@ public class ARTrackingImageController : MonoBehaviour
 		dataLoaded = false;
 
 #if UNITY_EDITOR
-		var path = Path.Combine(Application.streamingAssetsPath, GameDataFileName);
-		if (File.Exists(path))
+		var editorLang = GetCurrentLanguage();
+		foreach (var candidate in BuildGameDataCandidateList(editorLang))
 		{
-			var json = File.ReadAllText(path);
-			if (!string.IsNullOrWhiteSpace(json))
+			var path = Path.Combine(Application.streamingAssetsPath, candidate);
+			if (!File.Exists(path))
 			{
-				ApplyGameData(json);
+				continue;
 			}
+
+			var json = File.ReadAllText(path);
+			if (string.IsNullOrWhiteSpace(json))
+			{
+				continue;
+			}
+
+			lastLoadedGameDataFile = candidate;
+			ApplyGameData(json);
+			break;
 		}
 #endif
 	}

@@ -60,6 +60,12 @@ public class ScreenGamePlayQuiz : CanvasScreen
         base.OnDisable();
     }
 
+    protected override void OnLocalizationApplied()
+    {
+        base.OnLocalizationApplied();
+        RefreshFromCurrentQuestion();
+    }
+
     private void Update()
     {
         if (!awaitingAnswer)

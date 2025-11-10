@@ -194,10 +194,10 @@
     {
       "id": 20,
       "nextId": -1,
-      "pergunta": "Estamos sem a pergunta 20?",
+      "pergunta": "What is essential to understand about the use of Artificial Intelligence in today's society?",
       "respostas": [
-        { "id": "A", "texto": "Sim..." },
-        { "id": "B", "texto": "Nao..." }
+        { "id": "A", "texto": "That it completely replaces human capabilities in any context." },
+        { "id": "B", "texto": "That it can enhance human decisions, but requires ethical use and critical thinking" }
       ],
       "respostaCorreta": "A"
     }

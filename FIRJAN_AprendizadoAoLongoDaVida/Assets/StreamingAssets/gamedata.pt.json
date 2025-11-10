@@ -194,10 +194,10 @@
     {
       "id": 20,
       "nextId": -1,
-      "pergunta": "Estamos sem a pergunta 20?",
+      "pergunta": "O que é essencial compreender sobre o uso da Inteligência Artificial na sociedade atual?",
       "respostas": [
-        { "id": "A", "texto": "Sim..." },
-        { "id": "B", "texto": "Nao..." }
+        { "id": "A", "texto": "Que ela substitui completamente as capacidades humanas em qualquer contexto." },
+        { "id": "B", "texto": "Que ela pode potencializar decisões humanas, mas exige uso ético e pensamento crítico." }
       ],
       "respostaCorreta": "A"
     }

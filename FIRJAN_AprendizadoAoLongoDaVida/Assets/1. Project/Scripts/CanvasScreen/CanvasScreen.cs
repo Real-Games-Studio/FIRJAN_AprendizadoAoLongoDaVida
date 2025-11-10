@@ -32,6 +32,8 @@ public class CanvasScreen: MonoBehaviour
     public CanvasGroup canvasgroup;
     [SerializeField] protected ScreenData data;
     public List<LocalizationText> localizationTexts = new List<LocalizationText>();
+    private Coroutine localizationRoutine;
+    private bool localizationSubscribed;
     public virtual void OnValidate()
     {
         if (canvasgroup == null)
@@ -84,17 +86,76 @@ public class CanvasScreen: MonoBehaviour
         }
         // Registra o m騁odo CallScreenListner como ouvinte do evento CallScreen
         ScreenManager.CallScreen += CallScreenListner;
-        // Subscribe to localization changes (wait for manager if necessary)
-        StartCoroutine(WaitForLocalizationAndApply());
+        StartLocalizationListener();
     }
     public virtual void OnDisable()
     {
         // Remove o m騁odo CallScreenListner como ouvinte do evento CallScreen
         ScreenManager.CallScreen -= CallScreenListner;
+        StopLocalizationListener();
+    }
+
+    private void StartLocalizationListener()
+    {
+        if (localizationRoutine != null)
+        {
+            return;
+        }
+
+        localizationRoutine = StartCoroutine(WaitForLocalizationAndApply());
+    }
+
+    private void StopLocalizationListener()
+    {
+        if (localizationRoutine != null)
+        {
+            StopCoroutine(localizationRoutine);
+            localizationRoutine = null;
+        }
+
+        UnsubscribeLocalization();
+    }
+
+    private void SubscribeLocalization()
+    {
+        if (LocalizationManager.instance == null || localizationSubscribed)
+        {
+            return;
+        }
+
+        LocalizationManager.instance.OnLanguageChanged += HandleLocalizationChanged;
+        localizationSubscribed = true;
+    }
+
+    private void UnsubscribeLocalization()
+    {
+        if (!localizationSubscribed)
+        {
+            return;
+        }
+
         if (LocalizationManager.instance != null)
         {
-            LocalizationManager.instance.OnLanguageChanged -= ApplyLocalization;
+            LocalizationManager.instance.OnLanguageChanged -= HandleLocalizationChanged;
         }
+
+        localizationSubscribed = false;
+    }
+
+    private void HandleLocalizationChanged()
+    {
+        ApplyLocalizationChain();
+    }
+
+    private void ApplyLocalizationChain()
+    {
+        if (LocalizationManager.instance == null)
+        {
+            return;
+        }
+
+        ApplyLocalizationTexts();
+        OnLocalizationApplied();
     }
 
     private System.Collections.IEnumerator WaitForLocalizationAndApply()
@@ -103,12 +164,13 @@ public class CanvasScreen: MonoBehaviour
         {
             yield return null;
         }
-        // Apply now and subscribe
-        ApplyLocalization();
-        LocalizationManager.instance.OnLanguageChanged += ApplyLocalization;
+
+        localizationRoutine = null;
+        ApplyLocalizationChain();
+        SubscribeLocalization();
     }
 
-    private void ApplyLocalization()
+    protected virtual void ApplyLocalizationTexts()
     {
         if (localizationTexts == null) return;
         if (LocalizationManager.instance == null) return;
@@ -127,6 +189,26 @@ public class CanvasScreen: MonoBehaviour
             {
                 Debug.LogError("Failed to apply localization for key: " + lt.key + " - " + ex.Message, this);
             }
+        }
+    }
+
+    protected virtual void OnLocalizationApplied()
+    {
+    }
+
+    protected void SetLocalizedText(TMP_Text textField, string key)
+    {
+        if (textField == null) return;
+        if (LocalizationManager.instance == null) return;
+        if (string.IsNullOrEmpty(key)) return;
+
+        try
+        {
+            textField.text = LocalizationManager.instance.Get(key);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Failed to set localized text for key: " + key + " - " + ex.Message, this);
         }
     }
 
