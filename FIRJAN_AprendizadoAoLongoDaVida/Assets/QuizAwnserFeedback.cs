@@ -10,7 +10,7 @@ public class QuizAwnserFeedback : MonoBehaviour
     public Image backgroundToColor;
     public TMP_Text MainText; // texto para correto ou incorreto
     [FormerlySerializedAs("pointsText")]
-    public TMP_Text PointsText; // texto para mostrar quantas casas deve se mover (ex.: AVANCE<BR>3<BR>CASAS)
+    public TMP_Text PointsText; // texto para mostrar quantas casas deve se mover AVANCE<BR>CASAS<BR>CASA
     public CanvasGroup canvasGroup; // deve se ativar e desativar conforme o feedback
 
     [Header("Imagens de Feedback")]
@@ -107,11 +107,11 @@ public class QuizAwnserFeedback : MonoBehaviour
     {
         return feedback switch
         {
-            ARTrackingImageController.QuizFeedback.Error => "Resposta incorreta!",
-            ARTrackingImageController.QuizFeedback.Inactivity => "Tempo esgotado!",
-            ARTrackingImageController.QuizFeedback.CorrectFast => $"Acerto em {elapsedSeconds:0.0}s!",
-            ARTrackingImageController.QuizFeedback.CorrectMedium => $"Acerto em {elapsedSeconds:0.0}s!",
-            ARTrackingImageController.QuizFeedback.CorrectSlow => $"Acerto no limite ({elapsedSeconds:0.0}s)!",
+            ARTrackingImageController.QuizFeedback.Error => ResolveMessage("Resposta incorreta!", "Wrong answer!"),
+            ARTrackingImageController.QuizFeedback.Inactivity => ResolveMessage("Tempo esgotado!", "Time's up!"),
+            ARTrackingImageController.QuizFeedback.CorrectFast => ResolveMessage($"Acerto em {elapsedSeconds:0.0}s!", $"Correct in {elapsedSeconds:0.0}s!"),
+            ARTrackingImageController.QuizFeedback.CorrectMedium => ResolveMessage($"Acerto em {elapsedSeconds:0.0}s!", $"Correct in {elapsedSeconds:0.0}s!"),
+            ARTrackingImageController.QuizFeedback.CorrectSlow => ResolveMessage($"Acerto no limite ({elapsedSeconds:0.0}s)!", $"Made it just in time ({elapsedSeconds:0.0}s)!"),
             _ => string.Empty,
         };
     }
@@ -125,9 +125,15 @@ public class QuizAwnserFeedback : MonoBehaviour
         }
 
         var absHouses = Mathf.Abs(houses);
-        var prefix = ResolveMovementPrefix(houses > 0);
-        var unitLabel = ResolveUnitLabel(absHouses);
-        return $"{prefix}<BR>{absHouses}<BR>{unitLabel}";
+        var houseWord = absHouses > 1
+            ? ResolveMessage("casas", "tiles")
+            : ResolveMessage("casa", "tile");
+
+        var template = houses > 0
+            ? ResolveMessage("Avance<BR>{0}<BR>{1}", "Advance<BR>{0}<BR>{1}")
+            : ResolveMessage("Volte<BR>{0}<BR>{1}!", "Go Back<BR>{0}<BR>{1}!");
+
+        return string.Format(template, absHouses, houseWord);
     }
 
     private void UpdateStateImages(ARTrackingImageController.QuizFeedback feedback)
@@ -157,34 +163,15 @@ public class QuizAwnserFeedback : MonoBehaviour
                || feedback == ARTrackingImageController.QuizFeedback.CorrectSlow;
     }
 
-    private string ResolveMovementPrefix(bool forward)
-    {
-        if (IsPortugueseLanguage())
-        {
-            return forward ? "AVANCE" : "VOLTE";
-        }
-
-        return forward ? "ADVANCE" : "GO BACK";
-    }
-
-    private string ResolveUnitLabel(int amount)
-    {
-        var plural = amount > 1;
-        if (IsPortugueseLanguage())
-        {
-            return plural ? "CASAS" : "CASA";
-        }
-
-        return plural ? "SPACES" : "SPACE";
-    }
-
     private bool IsPortugueseLanguage()
     {
-        var fallbackLang = LocalizationManager.instance != null && !string.IsNullOrEmpty(LocalizationManager.instance.defaultLang)
-            ? LocalizationManager.instance.defaultLang
-            : "pt";
+        var fallback = LocalizationManager.instance != null ? LocalizationManager.instance.defaultLang : "pt";
+        var lang = PlayerPrefs.GetString("lang", fallback);
+        return !string.IsNullOrEmpty(lang) && lang.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
+    }
 
-        var currentLang = PlayerPrefs.GetString("lang", fallbackLang);
-        return !string.IsNullOrEmpty(currentLang) && currentLang.StartsWith("pt", StringComparison.OrdinalIgnoreCase);
+    private string ResolveMessage(string portuguese, string english)
+    {
+        return IsPortugueseLanguage() ? portuguese : english;
     }
 }

@@ -123,6 +123,7 @@ public class ARTrackingImageController : MonoBehaviour
 	private readonly Dictionary<int, QuestionEntry> questionById = new();
 	private readonly Dictionary<int, int> imageIdToIndex = new();
 	private readonly List<int> orderedImageIds = new();
+	private readonly Dictionary<int, Sprite> referenceSpriteCache = new();
 
 	[SerializeField]
 	[Tooltip("Próximo ID esperado para liberar a leitura da imagem.")]
@@ -301,6 +302,7 @@ public class ARTrackingImageController : MonoBehaviour
 		idToMapping.Clear();
 		imageIdToIndex.Clear();
 		orderedImageIds.Clear();
+		referenceSpriteCache.Clear();
 
 		for (var i = 0; i < imageIdMappings.Count; i++)
 		{
@@ -316,6 +318,49 @@ public class ARTrackingImageController : MonoBehaviour
 			imageIdToIndex[mapping.imageId] = orderedImageIds.Count;
 			orderedImageIds.Add(mapping.imageId);
 		}
+	}
+
+	public bool TryGetReferenceImageSprite(int imageId, out Sprite sprite)
+	{
+		if (referenceSpriteCache.TryGetValue(imageId, out sprite) && sprite != null)
+		{
+			return true;
+		}
+
+		sprite = null;
+
+		if (!idToMapping.TryGetValue(imageId, out var mapping))
+		{
+			return false;
+		}
+
+		if (trackedImageManager == null || trackedImageManager.referenceLibrary == null)
+		{
+			return false;
+		}
+
+		var library = trackedImageManager.referenceLibrary;
+		var count = library.count;
+		for (var i = 0; i < count; i++)
+		{
+			var referenceImage = library[i];
+			if (!string.Equals(referenceImage.name, mapping.referenceImageName, StringComparison.OrdinalIgnoreCase))
+			{
+				continue;
+			}
+
+			if (!referenceImage.texture)
+			{
+				return false;
+			}
+
+			var texture = referenceImage.texture;
+			sprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+			referenceSpriteCache[imageId] = sprite;
+			return true;
+		}
+
+		return false;
 	}
 
 	private IEnumerator LoadGameDataAsync(string language)

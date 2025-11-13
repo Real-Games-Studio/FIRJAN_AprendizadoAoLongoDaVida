@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScreenGamePlayCameraTracking : CanvasScreen
 {
@@ -11,6 +12,8 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
     [SerializeField] private TMP_Text currentFoundImage;
 
     [SerializeField] private AudioSource findSound;
+
+    [SerializeField] private Image nextTargetImage; // depois da primeira vez q o usuario detecta uma imagem, sempre saberemos qual é a proxima, logo devemos mostrar aqui a imagem. na primeira vez, deixar transparente ou desligado
 
     private void Awake()
     {
@@ -28,10 +31,12 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
         base.OnEnable();
         EnsureController();
         Subscribe();
+        UpdateNextTargetImage();
     }
 
     public override void OnDisable()
     {
+        ClearNextTargetImage();
         Unsubscribe();
         base.OnDisable();
     }
@@ -41,6 +46,7 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
         base.TurnOn();
         UpdateLastFoundImageLabel();
         UpdateCameraTrackingText();
+        UpdateNextTargetImage();
     }
 
     private void Subscribe()
@@ -75,12 +81,14 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
     {
         UpdateLastFoundImageLabel();
         UpdateCameraTrackingText();
+        UpdateNextTargetImage();
     }
 
     private void HandleSequenceReset()
     {
         UpdateLastFoundImageLabel();
         UpdateCameraTrackingText();
+        UpdateNextTargetImage();
     }
 
     private void HandleQuestionChanged(ARTrackingImageController.QuestionEntry question)
@@ -184,6 +192,47 @@ public class ScreenGamePlayCameraTracking : CanvasScreen
         }
 
         currentFoundImage.text = string.IsNullOrEmpty(imageName) ? string.Empty : imageName;
+    }
+
+    private void UpdateNextTargetImage()
+    {
+        if (nextTargetImage == null)
+        {
+            return;
+        }
+
+        if (ARTrackingImageController == null)
+        {
+            ClearNextTargetImage();
+            return;
+        }
+
+        var nextId = ARTrackingImageController.ExpectedNextImageId;
+        if (nextId < 0 || !ARTrackingImageController.HasAnsweredAnyQuestion)
+        {
+            ClearNextTargetImage();
+            return;
+        }
+
+        if (!ARTrackingImageController.TryGetReferenceImageSprite(nextId, out var sprite) || sprite == null)
+        {
+            ClearNextTargetImage();
+            return;
+        }
+
+        nextTargetImage.sprite = sprite;
+        nextTargetImage.enabled = true;
+    }
+
+    private void ClearNextTargetImage()
+    {
+        if (nextTargetImage == null)
+        {
+            return;
+        }
+
+        nextTargetImage.sprite = null;
+        nextTargetImage.enabled = false;
     }
 
     private void EnsureController()
